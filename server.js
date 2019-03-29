@@ -14,14 +14,14 @@ var events = db.collection('Evenement');
 
 
 // Récupération
-/*var getEvent = events.get()
+var getEvent = events.get()
     .then(data => {
         data.forEach(doc => {
             console.log(doc.id);
     })
 }).catch(err => {
     console.log('Erreur dans la récupération du document');
-});*/
+});
 
 var salon = {
     name: "alex"
