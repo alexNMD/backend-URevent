@@ -1,8 +1,13 @@
 var Crawler = require("crawler");
+var request = require('request');
 
-urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-03-30&date_end=2019-03-30";
+var urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-03-30&date_end=2019-03-30";
+/*var type = "event";
+var category = "soiree";
+var date_start = "2019-03-30";
+var date_end = "2019-03-30"*/
 
-var c = new Crawler({
+var home = new Crawler({
     maxConnections : 10,
     // This will be called for each crawled page
     callback : function (error, res, done) {
@@ -14,32 +19,55 @@ var c = new Crawler({
             //a lean implementation of core jQuery designed specifically for the server
             links = $('a.text-title');
             $(links).each(function(i, link){
-                console.log($(link).attr('href'));
+                url = "https://www.parisbouge.com"+link.attribs.href;
+                event.queue(url);
             });
         }
         done();
     }
 });
 
-c.queue(urlTest);
-// Queue URLs with custom callbacks & parameters
-/*
-c.queue([{
-    uri: 'http://parishackers.org/',
-    jQuery: false,
+/*home.queue(urlTest);*/
 
-    // The global callback won't be called
-    callback: function (error, res, done) {
+
+// API POST
+/*request.post(
+    'http://localhost:8080/api/test',
+    { json: { url: link.attribs.href }},
+    function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            console.log(body);
+        }
+    }
+);*/
+
+
+var event = new Crawler({
+    maxConnections : 10,
+    // This will be called for each crawled page
+    callback : function (error, res, done) {
         if(error){
             console.log(error);
         }else{
-            console.log('Grabbed', res.body.length, 'bytes');
+            var $ = res.$;
+            var evenement = {};
+            evenement.name = $('h1.text-title').text();
+            evenement.address = $('.address-container').text();
+            evenement.description = $('#event-detail-infos-content').text();
+            price = $('p');
+            evenement.price = price[8].children[0].data;
+            request.post(
+                'http://localhost:8080/api/test',
+                {json: evenement},
+                function (error, response, body) {
+                    if (!error && response.statusCode === 200) {
+                        console.log(body);
+                    }
+                }
+            );
         }
         done();
     }
-}]);
+});
 
-// Queue some HTML code directly without grabbing (mostly for tests)
-c.queue([{
-    html: '<p>This is a <strong>test</strong></p>'
-}]);*/
+event.queue("https://www.parisbouge.com/event/209301");
