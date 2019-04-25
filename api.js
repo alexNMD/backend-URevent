@@ -27,7 +27,7 @@ var tagsCollection = 'Tag';
 var usersCollection = 'Utilisateur';
 var productsCollection = 'Produit';
 var testCollection = 'test';
-
+var salonCollection = 'Salon';
 
 // API's calls
 // GET all collection
@@ -86,7 +86,7 @@ app.get('/api/users', function (req, res) {
 
 // GET by key
 app.get('/api/events/:key', function (req, res) {
-    const key = (req.params.key);
+    const key = req.params.key;
     firebaseHelper.firestore
         .getDocument(db, eventsCollection, key)
         .then(function (doc) {
@@ -144,11 +144,16 @@ app.get('/api/users/:key', function (req, res) {
 
 // POST
 app.post('/api/events', function (req, res) {
-    firebaseHelper.firestore
-        .createNewDocument(db, eventsCollection, req.body)
-        .then(function () {
-            res.status(200).send('Evenement créé');
-    });
+    if (!req.body.name || !req.body.description || !req.body.address) {
+        res.status(404).send('Certains champs sont manquant !')
+    } else {
+        firebaseHelper.firestore
+            .createNewDocument(db, eventsCollection, req.body)
+            .then(function () {
+                res.status(200).send('Evenement créé');
+            });
+    }
+
 });
 app.post('/api/tags', function (req, res) {
     firebaseHelper.firestore
@@ -172,14 +177,46 @@ app.post('/api/users', function (req, res) {
         });
 });
 
+// DELETE by key
+app.delete('/api/events/:key', function (req, res) {
+  const key = req.params.key;
+    firebaseHelper.firestore
+        .deleteDocument(db, eventsCollection, key)
+        .then(function (value) {
+            res.status(200).send(value);
+        })
+});
+app.delete('/api/tags/:key', function (req, res) {
+    const key = req.params.key;
+    firebaseHelper.firestore
+        .deleteDocument(db, tagsCollection, key)
+        .then(function (value) {
+            res.status(200).send(value);
+        })
+});
+app.delete('/api/products/:key', function (req, res) {
+    const key = req.params.key;
+    firebaseHelper.firestore
+        .deleteDocument(db, productsCollection, key)
+        .then(function (value) {
+            res.status(200).send(value);
+        })
+});
+app.delete('/api/users/:key', function (req, res) {
+    const key = req.params.key;
+    firebaseHelper.firestore
+        .deleteDocument(db, usersCollection, key)
+        .then(function (value) {
+            res.status(200).send(value);
+        })
+});
+
+
+// TEST
 app.post('/api/test', function (req, res) {
     firebaseHelper.firestore
         .createNewDocument(db, testCollection, req.body)
-        .then(function () {
-            res.status(200).send('test créé');
-        })
+        .then(docRef => console.log(docRef.id));
 });
-//TODO : mettre en place les end points de l'api "maison"
-//TODO : brancher le scrapper avec la BDD
-//TODO : avoir un affichage "propre" pour l'administration
-//TODO : rendre certains obligatoire à la création (POST)
+
+//TODO : avoir un affichage "propre" pour le front de l'administration
