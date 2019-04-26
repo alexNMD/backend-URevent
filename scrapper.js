@@ -1,9 +1,25 @@
 var Crawler = require("crawler");
 var request = require('request');
+const fs = require('fs');
+
+var log_name = new Date();
+var eventCount = 0;
+var content = ' événements enregistrés !';
+
+function logger(filename, content)
+{
+    fs.writeFile('logs/'+ log_name + '.txt', content, (err) => {
+        if (err) {
+            console.error(err);
+            return
+        }
+        //log written successfully
+    })
+}
 
 class Event
 {
-    constructor (name, address, description, price, img, baseURL, tag)
+    constructor (name, address, description, price, img, baseURL, tags)
     {
         this.name = name;
         this.address = address;
@@ -11,7 +27,7 @@ class Event
         this.price = price;
         this.img = img;
         this.baseURL = baseURL;
-        this.tag = tag;
+        this.tags = tags;
     }
 }
 
@@ -59,7 +75,9 @@ var homeParsing = new Crawler({
 
                 if (url.length < 40) {
                     eventParsing.queue({uri:url, parameter1: url});
+                    eventCount++;
                 }
+                logger(log_name, eventCount + content);
 
             });
         }
@@ -81,8 +99,6 @@ var homeParsing = new Crawler({
     }
 );*/
 
-
-
 var eventParsing = new Crawler({
     maxConnections : 10,
     // This will be called for each crawled page
@@ -93,7 +109,7 @@ var eventParsing = new Crawler({
             var $ = res.$;
 
             var name = $('h1.text-title').text();
-            var address = $('.address-container').text()
+            var address = $('.address-container').text();
             var description = $('#event-detail-infos-content').text();
             var price = $('p')[8].children[0].data;
             if (typeof $('.event-cover-picture')[0] !== 'undefined')
@@ -103,9 +119,18 @@ var eventParsing = new Crawler({
                 var img = '';
             }
             var baseURL = res.options.parameter1;
-            var evenement = new Event(name, address, description, price, img, baseURL);
-            console.log(evenement);
-            /*request.post(
+            var tags = [];
+            var styles = $('.label-event-style');
+            styles.each(function (i, style) {
+                if (style.children.length !== 0)
+                {
+                    tags[i] = style.children[0].data;
+                }
+            });
+            var evenement = new Event(name, address, description, price, img, baseURL, tags);
+
+            /*console.log(evenement);*/
+            request.post(
                 'http://localhost:8080/api/test',
                 {json: evenement},
                 function (error, response, body) {
@@ -113,13 +138,14 @@ var eventParsing = new Crawler({
                         console.log(body);
                     }
                 }
-            );*/
+            );
+
         }
         done();
     }
 });
-
-/*event.queue("https://www.parisbouge.com/event/209301");*/
+/*eventParsing.queue("https://www.parisbouge.com/event/210469");*/
 
 //TODO : améliorer le scrapper d'url afin d'obtenir les liens sur les différentes pages (gestion de la pagination)
+//TODO : -> bien vérifier l'intégrité des données récupérées ainsi que leur nombre
 //TODO : Rendre paramétrable le type de recherche (evenement, soirée, bar..) ainsi que la date de recherche
