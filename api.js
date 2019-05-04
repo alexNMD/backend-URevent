@@ -220,3 +220,4 @@ app.post('/api/test', function (req, res) {
 });
 
 //TODO : avoir un affichage "propre" pour le front de l'administration
+//TODO : enregistrement des tags dans la collection 'Tag' via le scrapper des Events
