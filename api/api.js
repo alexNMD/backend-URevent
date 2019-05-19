@@ -20,13 +20,6 @@ if (err) {
 	const testCollection = db.collection('test');
 	console.log('connexion en parfait état de fonctionnement !');
 
-server.app.route('*')
-.get(function (req, res) {
-	res.status(404).send({
-		statusCode: 404,
-		message: 'Mauvais endPoint !' 
-	})
-})
 
 server.app.route('/api/events')
 .post(function (req, res) {
@@ -400,6 +393,14 @@ server.app.route('/api/test/:key')
 			});
 		}
 		res.status(200).send({item})
+	})
+})
+
+server.app.route('*')
+.get(function (req, res) {
+	res.status(404).send({
+		statusCode: 404,
+		message: 'Mauvais endPoint !' 
 	})
 })
 })
