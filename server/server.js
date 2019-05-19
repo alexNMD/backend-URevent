@@ -6,7 +6,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // if testMod is true, then is a test. Else is a production
-const testMod = true
+const testMod = false
 
 // MongoDB connection
 if (testMod) {
@@ -17,10 +17,14 @@ if (testMod) {
 	});
 } else {
 	// PRODUCTION
-	var url = 'mongodb://mongodb-alexnmd.alwaysdata.net';
+	username = 'apiUser1';
+	password = 'Azertyuiop1';
+	var url = 'mongodb+srv://'+ username +':'+ password +'@urevent-bqouq.mongodb.net/test?retryWrites=true';
 	// serveur de production
-	app.listen(process.env.ALWAYSDATA_HTTPD_PORT, process.env.ALWAYSDATA_HTTPD_IP, function () {
-		console.log('API production lancée !');
+	app.listen(8080, function () {
+		console.log('API test lancée !');
 	});
 }
 module.exports = { url, app };
+
+

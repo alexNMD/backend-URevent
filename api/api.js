@@ -1,7 +1,7 @@
 var ObjectId = require('mongodb').ObjectID;
 const mongo = require('mongodb').MongoClient;
 const bcrypt = require('bcrypt');
-var server = require('./server/server');
+var server = require('../server/server');
 
 const saltRounds = 10;
 
