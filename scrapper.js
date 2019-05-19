@@ -31,13 +31,13 @@ class Event {
     }
 }
 
-var urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-04-06&date_end=2019-04-06";
+var urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-05-04&date_end=2019-05-04";
 
 
 /*var type = "event";
 var category = "soiree";*/
-var date_start = "2019-04-20";
-var date_end = "2019-04-20";
+var date_start = "2019-05-04";
+var date_end = "2019-05-20";
 var homeURL =
     "https://www.parisbouge.com/search?type=event&category=soiree&date_start="
     + date_start
@@ -60,8 +60,8 @@ var paginationParsing = new Crawler({
     }
 });
 
-/*console.log(homeURL);
-paginationParsing.queue(homeURL);*/
+console.log(homeURL);
+paginationParsing.queue(homeURL);
 
 var homeParsing = new Crawler({
     maxConnections: 10,
@@ -128,7 +128,7 @@ var eventParsing = new Crawler({
             var evenement = new Event(name, address, description, price, img, baseURL, tags, date_start, date_end);
 
             console.log(evenement);
-            /*request.post(
+            request.post(
                 'http://localhost:8080/api/test',
                 {json: evenement},
                 function (error, response, body) {
@@ -136,7 +136,7 @@ var eventParsing = new Crawler({
                         console.log(body);
                     }
                 }
-            );*/
+            );
 
         }
         done();
@@ -144,7 +144,7 @@ var eventParsing = new Crawler({
 });
 
 // test unitaire ->
-eventParsing.queue("https://www.parisbouge.com/event/210900");
+/*eventParsing.queue("https://www.parisbouge.com/event/210900");*/
 
 //TODO : améliorer le scrapper d'url afin d'obtenir les liens sur les différentes pages (gestion de la pagination)
 //TODO : -> bien vérifier l'intégrité des données récupérées ainsi que leur nombre
