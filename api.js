@@ -247,7 +247,31 @@ server.app.route('/api/users/register')
 })
 server.app.route('/api/users/login')
 .post(function (req, res) {
-	
+	usersCollection.findOne({ email: req.body.email }, (err, user) => {
+			if (err) {
+				console.log(err);
+				res.status(400).send({
+					message: err
+				})
+			}
+			if (!user) {
+				res.status(400).send({
+					message: "Utilisateur non existant !"
+				})
+			} else {
+				bcrypt.compare(req.body.password, user.password, function(err, response) {
+    				if (response) {
+    					res.status(200).send({
+    						message: 'email & password GOOD !'
+    					})
+    				} else {
+    					res.status(400).send({
+    						message: 'incorrect information !'
+    					})
+    				}
+			});
+		}
+		})
 })
 
 
