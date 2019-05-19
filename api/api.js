@@ -10,7 +10,7 @@ if (err) {
 	console.error(err)
 	return
 }
-const db = client.db('urevent');
+	const db = client.db('urevent');
 	// Initialisation des collections
 	const eventsCollection = db.collection('Evenement');
 	const tagsCollection = db.collection('Tag');
@@ -19,6 +19,14 @@ const db = client.db('urevent');
 	const salonCollection = db.collection('Salon');
 	const testCollection = db.collection('test');
 	console.log('connexion en parfait état de fonctionnement !');
+
+server.app.route('*')
+.get(function (req, res) {
+	res.status(404).send({
+		statusCode: 404,
+		message: 'Mauvais endPoint !' 
+	})
+})
 
 server.app.route('/api/events')
 .post(function (req, res) {
