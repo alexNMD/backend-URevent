@@ -7,12 +7,12 @@ app.use(bodyParser.json());
 
 // if testMod is true, then is a test. Else is a production
 const testMod = false
-
+const PORT = process.env.PORT || 8080;
 // MongoDB connection
 if (testMod) {
 	// TEST
 	var url = 'mongodb://localhost:27017';
-	app.listen(8080, function () {
+	app.listen(PORT, function () {
 		console.log('API test lancée !');
 	});
 } else {
@@ -21,7 +21,7 @@ if (testMod) {
 	password = 'Azertyuiop1';
 	var url = 'mongodb+srv://'+ username +':'+ password +'@urevent-bqouq.mongodb.net/test?retryWrites=true';
 	// serveur de production
-	app.listen(8080, function () {
+	app.listen(PORT, function () {
 		console.log('API test lancée !');
 	});
 }
