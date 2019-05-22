@@ -62,7 +62,7 @@ server.app.route('/api/events')
 });
 server.app.route('/api/events/:key')
 .get(function (req, res) {
-	if (req.params.key.lenght != 24) {
+	if (req.params.key.length != 24) {
 		res.status(400).send({
 			message: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
 		})
@@ -83,9 +83,13 @@ server.app.route('/api/events/:key')
 		res.status(200).send({ item })
 		})
 	}
-
 })
 .delete(function (req, res) {
+	if (req.params.key.length != 24) {
+	res.status(400).send({
+		message: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
+	})
+	} else {
 	var key = new ObjectId(req.params.key);
 	eventsCollection.deleteOne({ _id: key }, (err, item) => {
 			if (err) {
@@ -94,8 +98,9 @@ server.app.route('/api/events/:key')
 				message: err
 			});
 		}
-		res.status(200).send({item})
+		res.status(200).send({ item })
 	})
+}
 })
 
 server.app.route('/api/tags')
@@ -128,7 +133,7 @@ server.app.route('/api/tags')
 });
 server.app.route('/api/tags/:key')
 .get(function (req, res) {
-	if (req.params.key.lenght != 24) {
+	if (req.params.key.length != 24) {
 	res.status(400).send({
 		message: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
 	})
@@ -151,6 +156,11 @@ server.app.route('/api/tags/:key')
 }
 })
 .delete(function (req, res) {
+	if (req.params.key.length != 24) {
+	res.status(400).send({
+		message: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
+	})
+	} else {
 	var key = new ObjectId(req.params.key);
 	tagsCollection.deleteOne({ _id: key }, (err, item) => {
 			if (err) {
@@ -161,6 +171,7 @@ server.app.route('/api/tags/:key')
 		}
 		res.status(200).send({item})
 	})
+}
 })
 
 server.app.route('/api/users')
@@ -180,7 +191,7 @@ server.app.route('/api/users')
 });
 server.app.route('/api/users/:key')
 .get(function (req, res) {
-	if (req.params.key.lenght != 24) {
+	if (req.params.key.length != 24) {
 	res.status(400).send({
 		message: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
 	})
@@ -203,6 +214,11 @@ server.app.route('/api/users/:key')
 }
 })
 .delete(function (req, res) {
+	if (req.params.key.length != 24) {
+	res.status(400).send({
+		message: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
+	})
+	} else {
 	var key = new ObjectId(req.params.key);
 	usersCollection.deleteOne({ _id: key }, (err, item) => {
 			if (err) {
@@ -213,6 +229,7 @@ server.app.route('/api/users/:key')
 		}
 		res.status(200).send({item})
 	})
+}
 })
 server.app.route('/api/users/register')
 .post(function (req, res) {
@@ -313,7 +330,7 @@ server.app.route('/api/products')
 });
 server.app.route('/api/products/:key')
 .get(function (req, res) {
-	if (req.params.key.lenght != 24) {
+	if (req.params.key.length != 24) {
 	res.status(400).send({
 		message: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
 	})
@@ -336,6 +353,11 @@ server.app.route('/api/products/:key')
 }
 })
 .delete(function (req, res) {
+	if (req.params.key.length != 24) {
+	res.status(400).send({
+		message: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
+	})
+	} else {
 	var key = new ObjectId(req.params.key);
 	productsCollection.deleteOne({ _id: key }, (err, item) => {
 			if (err) {
@@ -346,6 +368,7 @@ server.app.route('/api/products/:key')
 		}
 		res.status(200).send({item})
 	})
+}
 })
 
 
