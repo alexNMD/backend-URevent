@@ -24,7 +24,4 @@ var geocoding = function(address, callback) {
 	});
 }
 
-
- 
-
 module.exports = geocoding;

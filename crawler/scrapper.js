@@ -32,7 +32,6 @@ var paginationParsing = new Crawler({
     }
 });
 
-console.log(homeURL);
 paginationParsing.queue(homeURL);
 
 var homeParsing = new Crawler({
@@ -121,7 +120,7 @@ var eventParsing = new Crawler({
 // test unitaire ->
 // eventParsing.queue("https://www.parisbouge.com/event/211278");
 
-//TODO : améliorer le scrapper d'url afin d'obtenir les liens sur les différentes pages (gestion de la pagination)
-//TODO : -> bien vérifier l'intégrité des données récupérées ainsi que leur nombre
 //TODO : Rendre paramétrable le type de recherche (evenement, soirée, bar..) ainsi que la date de recherche
-//TODO : rendre plus propre la récupération de date_start & date_end
+//TODO : Récupérer les heures (start & end)
+
+

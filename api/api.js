@@ -24,6 +24,7 @@ if (err) {
 server.app.route('/api/events')
 .post(function (req, res) {
 	if (!req.body.name || !req.body.description || !req.body.address) {
+			// console.log(req.body);
 			res.status(404).send({
 				message: 'Certains champs sont manquant !'
 			})
@@ -42,7 +43,7 @@ server.app.route('/api/events')
 			})
 	
 		
-	}).in
+	})
 }
 })
 .get(function (req, res) {
