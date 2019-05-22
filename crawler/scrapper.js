@@ -4,17 +4,82 @@ var Event = require('./models/Event');
 var Geocoding = require('./geocoding');
 var EventsLogger = require('./EventsLogger')
 
-var urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-05-04&date_end=2019-05-04";
 let eventCount = 0;
-/*var type = "event";
-var category = "soiree";*/
-var date_start = "2019-05-04";
-var date_end = "2019-05-20";
+
+var urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-05-04&date_end=2019-05-04&page=23";
+
+var currentDate = dateFormat(new Date(), 0);
+var futurDate = dateFormat(new Date(), 60);
+
+
 var homeURL =
     "https://www.parisbouge.com/search?type=event&category=soiree&date_start="
-    + date_start
+    + currentDate
     + "&date_end="
-    + date_end;
+    + futurDate;
+
+function dateFormat(date, nbj)
+{
+    dateYear = date.getFullYear();
+    dateMois = date.getMonth();
+    dateFormate="";
+    dateJour=date.getDate();
+    for(i = 0; i < nbj; i++)
+    {
+        dateJour+=1;
+        bisextile = false;
+        if(dateYear % 400 == 0|| (dateYear % 4 == 0 && dateYear % 100 !=0 ))
+            bisextile = true;
+        if(dateMois == 1)
+        {
+            if(dateJour > 28 && bisextile)
+            {
+                dateMois = dateMois + 1;
+                dateJour = dateJour - 28;
+            }
+            else if(dateJour > 29)
+            {
+                dateMois = dateMois + 1;
+                dateJour = dateJour - 29;
+            }
+        }
+
+        else if(dateMois % 2 == 0)
+        {
+            if(dateJour > 31)
+            {
+                dateMois = dateMois + 1;
+                dateJour = dateJour - 31;
+            }
+        }
+
+        else
+        {
+            if(dateJour > 30)
+            {
+                dateMois = dateMois + 1;
+                dateJour = dateJour - 30;
+            }
+        }
+        if(dateMois > 11)
+        {
+            dateYear = dateYear + 1;
+            dateMois = 0;
+        }
+    }
+    dateFormate += dateYear;
+    dateMois = dateMois+1;
+    if(dateMois < 10)
+        dateFormate += "-0" +dateMois;
+    else
+        dateFormate+="-"+dateMois;
+    if(dateJour < 10)
+        dateFormate += "-0" + dateJour;
+    else
+        dateFormate += "-"+dateJour;
+    return dateFormate;
+}
+
 
 var paginationParsing = new Crawler({
     maxConnections: 10,
@@ -23,16 +88,17 @@ var paginationParsing = new Crawler({
             console.log(error);
         } else {
             var $ = res.$;
-            var pages = $('.page').length - 1;
-            for (i = 1; i <= pages; i++) {
+            var pageItem = $('.page').length - 2;
+            var pageCount = parseInt($('.page')[pageItem].children[0].children[0].data);
+
+            for (i = 1; i <= pageCount; i++) {
                 homeParsing.queue(homeURL + '&page=' + i);
-            }
+            }     
+            
         }
         done();
     }
 });
-
-paginationParsing.queue(homeURL);
 
 var homeParsing = new Crawler({
     maxConnections: 10,
@@ -53,12 +119,11 @@ var homeParsing = new Crawler({
                     eventCount++;
                 }
             });
-            EventsLogger(eventCount);
+            EventsLogger(eventCount, currentDate, futurDate);
         }
         done();
     }
 });
-
 
 var eventParsing = new Crawler({
     maxConnections: 10,
@@ -73,12 +138,6 @@ var eventParsing = new Crawler({
 
             var date_start = $('a.text-default')[0].children[0].children[0].data;
             var date_end = $('a.text-default')[1].children[0].data;
-            /*            var hour_start = $('a.text-default')[0].next.data;*/
-/*            date_start = new Date(date_start);*/
-            /*console.log(date_start);
-            console.log(date_end);*/
-            /*console.log(hour_start);*/
-
             var address = $('.event-place-address').text();
             var description = $('#event-detail-infos-content').text();
             var price = $('p')[8].children[0].data;
@@ -117,10 +176,11 @@ var eventParsing = new Crawler({
     }
 });
 
+console.log(homeURL);
+paginationParsing.queue(homeURL);
 // test unitaire ->
 // eventParsing.queue("https://www.parisbouge.com/event/211278");
 
-//TODO : Rendre paramétrable le type de recherche (evenement, soirée, bar..) ainsi que la date de recherche
-//TODO : Récupérer les heures (start & end)
-
+// TODO : Récupérer les heures (start & end)
+// TODO : mieux récupérer les tarifs des soirées
 
