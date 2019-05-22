@@ -25,7 +25,7 @@ server.app.route('/api/events')
 .post(function (req, res) {
 	if (!req.body.name || !req.body.description || !req.body.address) {
 			// console.log(req.body);
-			res.status(404).send({
+			res.status(400).send({
 				message: 'Certains champs sont manquant !'
 			})
 	}
@@ -33,12 +33,12 @@ server.app.route('/api/events')
 		eventsCollection.insertOne(req.body, (err, result) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
 		 
-			res.status(200).send({
+			res.status(201).send({
 				message : result.ops[0]
 			})
 	
@@ -50,7 +50,7 @@ server.app.route('/api/events')
 	eventsCollection.find().toArray((err, items) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -66,7 +66,7 @@ server.app.route('/api/events/:key')
 	eventsCollection.findOne({ _id: key }, (err, item) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -83,7 +83,7 @@ server.app.route('/api/events/:key')
 	eventsCollection.deleteOne({ _id: key }, (err, item) => {
 			if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -96,11 +96,11 @@ server.app.route('/api/tags')
 	tagsCollection.insertOne(req.body, (err, result) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
-		res.status(200).send({
+		res.status(201).send({
 			message : result.ops[0]
 		})
 	})
@@ -109,7 +109,7 @@ server.app.route('/api/tags')
 	tagsCollection.find().toArray((err, items) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -125,7 +125,7 @@ server.app.route('/api/tags/:key')
 	tagsCollection.findOne({ _id: key }, (err, item) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -142,7 +142,7 @@ server.app.route('/api/tags/:key')
 	tagsCollection.deleteOne({ _id: key }, (err, item) => {
 			if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -155,11 +155,11 @@ server.app.route('/api/users')
 	usersCollection.insertOne(req.body, (err, result) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
-		res.status(200).send({
+		res.status(201).send({
 			message : result.ops[0]
 		})
 	})
@@ -168,7 +168,7 @@ server.app.route('/api/users')
 	usersCollection.find().toArray((err, items) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -184,7 +184,7 @@ server.app.route('/api/users/:key')
 	usersCollection.findOne({ _id: key }, (err, item) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -201,7 +201,7 @@ server.app.route('/api/users/:key')
 	usersCollection.deleteOne({ _id: key }, (err, item) => {
 			if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -238,7 +238,7 @@ server.app.route('/api/users/register')
 							message: err
 						})
 					}
-					res.status(200).send({
+					res.status(201).send({
 						message : result.ops[0]
 					})
 					})
@@ -257,7 +257,7 @@ server.app.route('/api/users/login')
 				})
 			}
 			if (!user) {
-				res.status(400).send({
+				res.status(404).send({
 					message: "Utilisateur non existant !"
 				})
 			} else {
@@ -286,7 +286,7 @@ server.app.route('/api/products')
 				message: err
 			});
 		}
-		res.status(200).send({
+		res.status(201).send({
 			message : result.ops[0]
 		})
 	})
@@ -295,7 +295,7 @@ server.app.route('/api/products')
 	productsCollection.find().toArray((err, items) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -311,7 +311,7 @@ server.app.route('/api/products/:key')
 	productsCollection.findOne({ _id: key }, (err, item) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -328,7 +328,7 @@ server.app.route('/api/products/:key')
 	productsCollection.deleteOne({ _id: key }, (err, item) => {
 			if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -343,11 +343,11 @@ server.app.route('/api/test')
 	testCollection.insertOne(req.body, (err, result) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
-		res.status(200).send({
+		res.status(201).send({
 			message : result.ops[0]
 		})
 	})
@@ -356,7 +356,7 @@ server.app.route('/api/test')
 	testCollection.find().toArray((err, items) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -372,7 +372,7 @@ server.app.route('/api/test/:key')
 	testCollection.findOne({ _id: key }, (err, item) => {
 		if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
@@ -389,7 +389,7 @@ server.app.route('/api/test/:key')
 	testCollection.deleteOne({ _id: key }, (err, item) => {
 			if (err) {
 			console.log(err);
-			res.status(404).send({
+			res.status(400).send({
 				message: err
 			});
 		}
