@@ -6,7 +6,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // if testMod is true, then is a test. Else is a production
-const testMod = true;
+const testMod = false;
 const PORT = process.env.PORT || 8080;
 
 // MongoDB connection
