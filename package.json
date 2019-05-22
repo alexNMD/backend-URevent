@@ -1,0 +1,33 @@
+{
+  "name": "backend-urevent",
+  "version": "1.0.0",
+  "description": "api and scrapper for urEvent",
+  "main": "api.js",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.18.3",
+    "crawler": "^1.2.0",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "firebase-admin": "^7.1.1",
+    "firebase-functions-helper": "^0.7.0",
+    "jquery": "^3.3.1",
+    "mongodb": "^3.2.5",
+    "mysql": "^2.16.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node api/api.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexNMD/backend-URevent.git"
+  },
+  "author": "Alexandre Normand",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexNMD/backend-URevent/issues"
+  },
+  "homepage": "https://github.com/alexNMD/backend-URevent#readme"
+}
