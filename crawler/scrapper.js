@@ -9,7 +9,7 @@ let eventCount = 0;
 var urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-05-04&date_end=2019-05-04&page=23";
 
 var currentDate = dateFormat(new Date(), 0);
-var futurDate = dateFormat(new Date(), 60);
+var futurDate = dateFormat(new Date(), 30);
 
 
 var homeURL =
@@ -134,13 +134,35 @@ var eventParsing = new Crawler({
             var $ = res.$;
 
             var name = $('h1.text-title').text();
-
-
             var date_start = $('a.text-default')[0].children[0].children[0].data;
             var date_end = $('a.text-default')[1].children[0].data;
             var address = $('.event-place-address').text();
             var description = $('#event-detail-infos-content').text();
-            var price = $('p')[8].children[0].data;
+
+            const regexp = RegExp('^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$');
+            var stringP = $('p').toString();
+            indexStart = stringP.indexOf('&#xE0;');
+            if (stringP.substring(indexStart+7, indexStart+12).match(regexp)) {
+                hours_start = stringP.substring(indexStart+7, indexStart+12);
+            } else {
+                hours_start = 'Aucune infos';
+            }
+            stringP = stringP.replace('&#xE0;', '');
+            indexEnd = stringP.indexOf('&#xE0;');
+            if (stringP.substring(indexEnd+7, indexEnd+12).match(regexp)) {
+                hours_end = stringP.substring(indexEnd+7, indexEnd+12);
+            } else {
+                hours_end = 'Aucune infos';
+            }
+            
+            var start = { date_start, hours_start };
+            var end = { date_end, hours_end };
+
+            if ($('p')[8].children[0].data === 'tarif') {
+                price = $('p')[9].children[0].data
+            } else {
+                price = $('p')[8].children[0].data
+            }
             if (typeof $('.event-cover-picture')[0] !== 'undefined') {
                 var img = $('.event-cover-picture')[0].attribs.src;
             } else {
@@ -157,29 +179,30 @@ var eventParsing = new Crawler({
 
             Geocoding(address, function(response){
                 var location = response;
-                var evenement = new Event(name, address, description, price, img, baseURL, tags, date_start, date_end, location);
-                console.log(evenement);
+                var evenement = new Event(name, address, description, price, img, baseURL, tags, start, end, location);
+                // console.log(evenement);
+                request.post(
+                'https://api-urevent.herokuapp.com/api/events',
+                { json: evenement },
+                function (error, response, body) {
+                    if (!error && response.statusCode === 200) {
+                        console.log(body);
+                    }
+                    }
+                );
             })             
                 
-            // request.post(
-            //     'http://localhost:8080/api/test',
-            //     {json: evenement},
-            //     function (error, response, body) {
-            //         if (!error && response.statusCode === 200) {
-            //             console.log(body);
-            //         }
-            //     }
-            // );
+            
 
         }
         done();
     }
 });
 
-console.log(homeURL);
+// console.log(homeURL);
 paginationParsing.queue(homeURL);
 // test unitaire ->
-// eventParsing.queue("https://www.parisbouge.com/event/211278");
+// eventParsing.queue("https://www.parisbouge.com/event/212370");
 
 // TODO : Récupérer les heures (start & end)
 // TODO : mieux récupérer les tarifs des soirées
