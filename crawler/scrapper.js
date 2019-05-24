@@ -9,7 +9,7 @@ let eventCount = 0;
 var urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-05-04&date_end=2019-05-04&page=23";
 
 var currentDate = dateFormat(new Date(), 0);
-var futurDate = dateFormat(new Date(), 30);
+var futurDate = dateFormat(new Date(), 0);
 
 
 var homeURL =
@@ -119,7 +119,7 @@ var homeParsing = new Crawler({
                     eventCount++;
                 }
             });
-            EventsLogger(eventCount, currentDate, futurDate);
+        EventsLogger(eventCount, currentDate, futurDate);
         }
         done();
     }
@@ -154,7 +154,7 @@ var eventParsing = new Crawler({
             } else {
                 hours_end = 'Aucune infos';
             }
-            
+
             var start = { date_start, hours_start };
             var end = { date_end, hours_end };
 
@@ -180,7 +180,8 @@ var eventParsing = new Crawler({
             Geocoding(address, function(response){
                 var location = response;
                 var evenement = new Event(name, address, description, price, img, baseURL, tags, start, end, location);
-                // console.log(evenement);
+                console.log(evenement);
+                
                 request.post(
                 'https://api-urevent.herokuapp.com/api/events',
                 { json: evenement },
@@ -198,11 +199,10 @@ var eventParsing = new Crawler({
         done();
     }
 });
-
 // console.log(homeURL);
-paginationParsing.queue(homeURL);
+// paginationParsing.queue(homeURL);
 // test unitaire ->
-// eventParsing.queue("https://www.parisbouge.com/event/212370");
+eventParsing.queue("https://www.parisbouge.com/event/212370");
 
 // TODO : Récupérer les heures (start & end)
 // TODO : mieux récupérer les tarifs des soirées
