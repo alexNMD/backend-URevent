@@ -1,5 +1,5 @@
 class Event {
-    constructor(name, address, description, price, img, baseURL, tags, date_start, date_end, location) {
+    constructor(name, address, description, price, img, baseURL, tags, start, end, location) {
         this.name = name;
         this.address = address;
         this.description = description;
@@ -7,8 +7,8 @@ class Event {
         this.img = img;
         this.baseURL = baseURL;
         this.tags = tags;
-        this.date_start = date_start;
-        this.date_end = date_end;
+        this.start = start;
+        this.end = end;
         this.location = location
     }
 }
