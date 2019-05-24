@@ -455,7 +455,7 @@
 	})
 
 	function verifToken(req, res, next) {
-		var excludePath = ['/api/users/register', '/api/users/login'];	
+		var excludePath = ['/api/users/register', '/api/users/login', '/api/test'];	
 		if (excludePath.indexOf(req.path) !== -1) {
 			req.token = 'excludePath';
 			next();
