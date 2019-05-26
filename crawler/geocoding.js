@@ -1,6 +1,7 @@
 var request = require('request');
+require('dotenv').config();
 
-const apiK = "AIzaSyDKAYgVkJUMbQJ6KzkQWuXfgntS-vRGtjc";
+const apiK = process.env.GOOGLE_APIK;
 
 urlTest = 'https://maps.googleapis.com/maps/api/geocode/json?address=32+quai+d’Austerlitz,+75013,+Paris,+France&key=AIzaSyDKAYgVkJUMbQJ6KzkQWuXfgntS-vRGtjc';
 
