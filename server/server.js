@@ -17,23 +17,6 @@ app.listen(PORT, function () {
 	console.log('Status: ' + devStatus);
 })
 
-// if (testMod) {
-// 	// TEST
-// 	var url = 'mongodb://localhost:27017';
-// 	app.listen(PORT, function () {
-// 		console.log('API test lancée !');
-// 	});
-// } else {
-// 	// PRODUCTION
-// 	username = 'apiUser1';
-// 	password = 'Azertyuiop1';
-// 	var url = 'mongodb+srv://'+ username +':'+ password +'@urevent-bqouq.mongodb.net/test?retryWrites=true';
-// 	// serveur de production
-// 	app.listen(PORT, function () {
-// 		console.log('API production lancée !');
-// 	});
-// }
-
 module.exports = { url, app };
 
 

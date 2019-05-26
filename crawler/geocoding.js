@@ -1,4 +1,5 @@
 var request = require('request');
+require('dotenv').config();
 
 const apiK = process.env.GOOGLE_APIK;
 
