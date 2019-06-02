@@ -26,10 +26,16 @@
 			if (req.token === 'excludePath') {
 				next();
 			} else {
-				jwt.verify(req.token, 'secretkey', (err, auth) => {
+				jwt.verify(req.token, 'userKey', (err, auth) => {
 				if (err) {
-					res.status(401).send({
-						message: 'Veuillez vous connecter !'
+					jwt.verify(req.token, 'adminKey', (err, auth) => {
+						if (err) {
+							res.status(401).send({
+								message: 'Veuillez vous connecter !!!'
+							})
+						} else {
+							next();
+						}
 					})
 				} else {
 					next();
@@ -135,7 +141,7 @@
 			}
 			res.status(200).send({ 
 				'Collection': 'Tag',
-				items 
+				items,
 			})
 		})
 	});
@@ -183,7 +189,7 @@
 	})
 
 	server.app.route('/api/users')
-	.get(function (req, res) {
+	.get(verifAdmin, function (req, res) {
 		usersCollection.find().toArray((err, items) => {
 			if (err) {
 				console.log(err);
@@ -221,7 +227,7 @@
 		})
 	}
 	})
-	.delete(function (req, res) {
+	.delete(verifAdmin, function (req, res) {
 		if (req.params.key.length != 24) {
 		res.status(400).send({
 			message: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
@@ -294,12 +300,23 @@
 				} else {
 					bcrypt.compare(req.body.password, user.password, function(err, response) {
 	    				if (response) {
-	    					jwt.sign({ user: req.body.email }, 'secretkey', (err, token) => {
-	    						res.status(200).send({
-	    						message: 'email & password GOOD !',
-	    						token: token
-	    					})
-	    					})
+	    					if (user.is_admin) {
+	    						jwt.sign({ user: req.body.email }, 'adminKey', (err, token) => {
+		    						res.status(200).send({
+		    							message: 'email & password GOOD !',
+		    							is_admin: true,
+		    							token: token
+	    							})
+	    						})
+	    					} else {
+		    					jwt.sign({ user: req.body.email }, 'userKey', (err, token) => {
+		    						res.status(200).send({
+		    							message: 'email & password GOOD !',
+		    							token: token
+	    							})
+	    						})
+	    					}
+	    					
 	    					
 	    					
 	    				} else {
@@ -455,7 +472,7 @@
 	})
 
 	function verifToken(req, res, next) {
-		var excludePath = ['/api/users/register', '/api/users/login', '/api/test'];	
+		const excludePath = ['/api/users/register', '/api/users/login', '/api/test'];	
 		if (excludePath.indexOf(req.path) !== -1) {
 			req.token = 'excludePath';
 			next();
@@ -473,5 +490,16 @@
 				})
 			}
 		}
+	}
+	function verifAdmin(req, res, next) {
+		jwt.verify(req.token, 'adminKey', (err, auth) => {
+				if (err) {
+					res.status(401).send({
+						message: 'Connectez vous en tant qu\'admin !'
+					})
+				} else {
+					next();
+				}
+			});
 	}
 
