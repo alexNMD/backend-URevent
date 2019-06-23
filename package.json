@@ -16,12 +16,15 @@
     "jquery": "^3.4.1",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.2.7",
-    "mysql": "^2.17.1"
+    "mysql": "^2.17.1",
+    "node-cron": "^2.0.3"
   },
   "devDependencies": {},
   "scripts": {
     "start": "node api/api.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "scrapper": "node crawler/scrapper.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev":"node crawler/scrapper.js & npm start"
   },
   "repository": {
     "type": "git",

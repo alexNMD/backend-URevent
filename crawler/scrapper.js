@@ -5,6 +5,7 @@ var Geocoding = require('./geocoding');
 var EventsLogger = require('./EventsLogger');
 let eventCount = 0;
 var urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-05-04&date_end=2019-05-04&page=23";
+var cron = require('node-cron');
 
 var currentDate = dateFormat(new Date(), 0);
 var futurDate = dateFormat(new Date(), 0);
@@ -224,7 +225,11 @@ var eventParsing = new Crawler({
 
 // Fonctionnement normal ->
 // console.log(homeURL);
-paginationParsing.queue(homeURL);
+cron.schedule('0 0 0 * * *', () => {
+    console.log('running a task every day at midnight');
+    paginationParsing.queue(homeURL);
+});
+
 
 // test unitaire ->
 // eventParsing.queue("https://www.parisbouge.com/event/212370");
@@ -232,3 +237,4 @@ paginationParsing.queue(homeURL);
 // TODO : Reformater les tags pour une récupération plus efficace (suppression des accents, des espaces...)
 // TODO : Monter l'interface Admin (BO)
 // TODO : Gestion des salons de discussion
+// TODO : Ajout de cron quotidien pour le scrapper (node-cron)
