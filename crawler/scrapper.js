@@ -2,10 +2,8 @@ var Crawler = require("crawler");
 var request = require('request');
 var Event = require('./models/Event');
 var Geocoding = require('./geocoding');
-var EventsLogger = require('./EventsLogger')
-
+var EventsLogger = require('./EventsLogger');
 let eventCount = 0;
-
 var urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-05-04&date_end=2019-05-04&page=23";
 
 var currentDate = dateFormat(new Date(), 0);
@@ -80,6 +78,39 @@ function dateFormat(date, nbj)
     return dateFormate;
 }
 
+function formatTags (tags) {
+    let sortedTags = [];
+    if (tags.length > 0) {
+        tags.forEach(function (tag, i) {
+                sortedTags[i] = new Object({ name: tag });
+        });
+            return sortedTags;
+    }
+}
+
+function APIinsert (collection, object) {
+    const userToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidXNlckB1cmV2ZW50LmNvbSIsImlhdCI6MTU1ODk4NTMyOH0.Qp5bA3j-mcA7XbFD6x09Y_PTLqhHs-wjLLuJdsgYJqg';
+    const devStatus = process.env.NODE_ENV;
+    let baseURL;
+    if (devStatus === 'test') {
+        baseURL = 'http://localhost:8080/api/';
+    } else {
+        baseURL = 'https://api-urevent.herokuapp.com/api/';
+    }
+    request.post({
+            url: baseURL + collection,
+            headers: {
+                'Authorization': userToken
+            },
+            json: object
+        },
+        function (error, response, body) {
+            if (!error && response.statusCode === 201 || 200) {
+                console.log('OK');
+            }
+        }
+    );
+}
 
 var paginationParsing = new Crawler({
     maxConnections: 10,
@@ -93,8 +124,8 @@ var paginationParsing = new Crawler({
 
             for (i = 1; i <= pageCount; i++) {
                 homeParsing.queue(homeURL + '&page=' + i);
-            }     
-            
+            }
+
         }
         done();
     }
@@ -179,31 +210,25 @@ var eventParsing = new Crawler({
 
             Geocoding(address, function(response){
                 var location = response;
-                var evenement = new Event(name, address, description, price, img, baseURL, tags, start, end, location);
-                console.log(evenement);
-                
-                request.post(
-                'https://api-urevent.herokuapp.com/api/events',
-                { json: evenement },
-                function (error, response, body) {
-                    if (!error && response.statusCode === 200) {
-                        console.log(body);
-                    }
-                    }
-                );
-            })             
-                
-            
+                let sortedTags = formatTags(tags);
+                APIinsert('tags', sortedTags);
 
+                var evenement = new Event(name, address, description, price, img, baseURL, tags, start, end, location);
+                APIinsert('events', evenement);
+                // console.log(evenement);
+            })
         }
         done();
     }
 });
+
+// Fonctionnement normal ->
 // console.log(homeURL);
-// paginationParsing.queue(homeURL);
+paginationParsing.queue(homeURL);
+
 // test unitaire ->
-eventParsing.queue("https://www.parisbouge.com/event/212370");
+// eventParsing.queue("https://www.parisbouge.com/event/212370");
 
-// TODO : Récupérer les heures (start & end)
-// TODO : mieux récupérer les tarifs des soirées
-
+// TODO : Reformater les tags pour une récupération plus efficace (suppression des accents, des espaces...)
+// TODO : Monter l'interface Admin (BO)
+// TODO : Gestion des salons de discussion

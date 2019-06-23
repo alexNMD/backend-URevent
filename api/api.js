@@ -119,18 +119,33 @@
 
 	server.app.route('/api/tags')
 	.post(function (req, res) {
-		tagsCollection.insertOne(req.body, (err, result) => {
-			if (err) {
-				console.log(err);
-				res.status(400).send({
-					message: err
-				});
-			}
-			res.status(201).send({
-				message : result.ops[0]
-			})
-		})
+        let tags = Object.values(req.body);
+        tags.forEach(function (tag) {
+            tagsCollection.findOne({ 'name': tag.name }, (err, item) => {
+                if (err) {
+                    console.log(err);
+                    res.status(400).send({
+                        message: err
+                    });
+                }
+                if (!item) {
+                    tagsCollection.insertOne(tag, (err, result) => {
+                        if (err) {
+                            console.log(err);
+                            res.status(400).send({
+                                message: err
+                            });
+                        }
+                    });
+                }
+            });
+        });
+		res.status(201).send({
+			message: 'OK'
+		});
 	})
+
+
 	.get(function (req, res) {
 		tagsCollection.find().toArray((err, items) => {
 			if (err) {
@@ -487,7 +502,7 @@
 			} else {
 				res.status(401).send({
 					message: 'Veuillez vous connecter !'
-				})
+				});
 			}
 		}
 	}

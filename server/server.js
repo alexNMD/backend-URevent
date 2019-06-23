@@ -15,7 +15,7 @@ const devStatus = process.env.NODE_ENV;
 app.listen(PORT, function () {
 	console.log('API lancée ! || PORT: ' + PORT);
 	console.log('Status: ' + devStatus);
-})
+});
 
 module.exports = { url, app };
 
