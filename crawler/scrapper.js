@@ -225,8 +225,9 @@ var eventParsing = new Crawler({
 
 // Fonctionnement normal ->
 // console.log(homeURL);
+console.log('Scrapper en attente...');
 cron.schedule('0 0 0 * * *', () => {
-    console.log('running a task every day at midnight');
+    console.log('Lancement... DATE de démarrage : ' + new Date());
     paginationParsing.queue(homeURL);
 });
 
