@@ -90,7 +90,7 @@ function formatTags (tags) {
 }
 
 function APIinsert (collection, object) {
-    const userToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidXNlckB1cmV2ZW50LmNvbSIsImlhdCI6MTU1ODk4NTMyOH0.Qp5bA3j-mcA7XbFD6x09Y_PTLqhHs-wjLLuJdsgYJqg';
+    const userToken = process.env.userToken;
     const devStatus = process.env.NODE_ENV;
     let baseURL;
     if (devStatus === 'test') {
