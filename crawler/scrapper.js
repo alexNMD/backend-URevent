@@ -105,9 +105,11 @@ function APIinsert (collection, object) {
             },
             json: object
         },
-        function (error, response, body) {
-            if (!error && response.statusCode === 201 || 200) {
-                console.log('OK');
+        function (error, response) {
+            if (!error) {
+                console.log('OK : ' + response.statusCode);
+            } else {
+                console.log('error');
             }
         }
     );
@@ -120,8 +122,16 @@ var paginationParsing = new Crawler({
             console.log(error);
         } else {
             var $ = res.$;
-            var pageItem = $('.page').length - 2;
-            var pageCount = parseInt($('.page')[pageItem].children[0].children[0].data);
+
+            let pageItem;
+            let pageCount;
+            if ($('.page').length !== 0) {
+                pageItem = $('.page').length - 2;
+                pageCount = parseInt($('.page')[pageItem].children[0].children[0].data);
+            } else {
+                pageCount = 1;
+            }
+
 
             for (i = 1; i <= pageCount; i++) {
                 homeParsing.queue(homeURL + '&page=' + i);
@@ -224,12 +234,12 @@ var eventParsing = new Crawler({
 });
 
 // Fonctionnement normal ->
-// console.log(homeURL);
-console.log('Scrapper en attente...');
-cron.schedule('0 0 0 * * *', () => {
+console.log(homeURL);
+// console.log('Scrapper en attente...');
+// cron.schedule('0 0 0 * * *', () => {
     console.log('Lancement... DATE de démarrage : ' + new Date());
     paginationParsing.queue(homeURL);
-});
+// });
 
 
 // test unitaire ->
@@ -237,5 +247,4 @@ cron.schedule('0 0 0 * * *', () => {
 
 // TODO : Reformater les tags pour une récupération plus efficace (suppression des accents, des espaces...)
 // TODO : Monter l'interface Admin (BO)
-// TODO : Gestion des salons de discussion
 // TODO : Ajout de cron quotidien pour le scrapper (node-cron)

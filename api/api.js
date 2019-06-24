@@ -54,9 +54,30 @@
 					message: err
 				});
 			}
-			 
-				res.status(201).send({
-					message : result.ops[0]
+			let eventKey = result.ops[0]._id;
+			salonCollection.insertOne(
+				{
+				'event-key': eventKey,
+				'comments': [{ }]
+				}, (err, result) => {
+					if (err) {
+						console.log(err);
+						res.status(400).send({
+							message: err
+						});
+					}
+					let salonKey = result.ops[0]._id;
+					eventsCollection.updateOne({ _id: eventKey },{ $set: { 'salon-key': salonKey } }, (err, result) => {
+						if (err) {
+							console.log(err);
+							res.status(400).send({
+								message: err
+							});
+						}
+						res.status(201).send({
+							message : result
+						})
+					})
 				})
 		})
 	})
@@ -115,7 +136,7 @@
 			res.status(200).send({ item })
 		})
 	}
-	})
+	});
 
 	server.app.route('/api/tags')
 	.post(function (req, res) {
@@ -144,8 +165,6 @@
 			message: 'OK'
 		});
 	})
-
-
 	.get(function (req, res) {
 		tagsCollection.find().toArray((err, items) => {
 			if (err) {
@@ -201,7 +220,7 @@
 			res.status(200).send({item})
 		})
 	}
-	})
+	});
 
 	server.app.route('/api/users')
 	.get(verifAdmin, function (req, res) {
@@ -259,7 +278,7 @@
 			res.status(200).send({item})
 		})
 	}
-	})
+	});
 	server.app.route('/api/users/register')
 	.post(function (req, res) {
 		// Fields expected : lastname, firstname, email, password
@@ -298,7 +317,7 @@
 			}
 			})
 		}
-	})
+	});
 	server.app.route('/api/users/login')
 	.post(function (req, res) {
 		usersCollection.findOne({ email: req.body.email }, (err, user) => {
@@ -342,7 +361,7 @@
 				});
 			}
 			})
-	})
+	});
 
 
 	server.app.route('/api/products')
@@ -414,7 +433,7 @@
 			res.status(200).send({item})
 		})
 	}
-	})
+	});
 
 
 	// TEST
@@ -518,3 +537,4 @@
 			});
 	}
 
+	// TODO : Gestion des salons de discussion
