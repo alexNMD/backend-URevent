@@ -22,6 +22,6 @@ var geocoding = function(address, callback) {
 		}
 		return callback(location);
 	});
-}
+};
 
 module.exports = geocoding;

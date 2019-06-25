@@ -92,15 +92,22 @@ const initializeRoutes = (app, database) => {
                 })
             } else {
                 var key = new ObjectId(req.params.key);
-                eventsCollection.deleteOne({ _id: key }, (err, item) => {
-                    if (err) {
-                        console.log(err);
-                        res.status(400).send({
-                            message: err
-                        });
-                    }
-                    res.status(200).send({ item })
-                })
+                salonCollection.deleteOne({ 'event-key': key }).then(function () {
+                    eventsCollection.deleteOne({ _id: key }, (err, item) => {
+                        if (err) {
+                            console.log(err);
+                            res.status(400).send({
+                                message: err
+                            });
+                        }
+                        res.status(200).send({ item })
+                    })
+                }).catch(function(err) {
+                    res.status(400).send({
+                        message: err
+                    })
+                });
+
             }
         });
 
@@ -205,7 +212,7 @@ const initializeRoutes = (app, database) => {
         });
     app.route('/api/users/:key')
         .get(function (req, res) {
-            if (req.params.key.length != 24) {
+            if (req.params.key.length !== 24) {
                 res.status(400).send({
                     message: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
                 })
