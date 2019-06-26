@@ -408,14 +408,6 @@ const initializeRoutes = (app, database) => {
             }
         });
 
-    app.route('*')
-        .get(function (req, res) {
-            res.status(404).send({
-                statusCode: 404,
-                message: 'Mauvais endPoint !'
-            })
-        });
-
     // TEST
     app.route('/api/test')
         .post(function (req, res) {
@@ -473,6 +465,14 @@ const initializeRoutes = (app, database) => {
                     });
                 }
                 res.status(200).send({item})
+            })
+        });
+
+    app.route('*')
+        .get(function (req, res) {
+            res.status(404).send({
+                statusCode: 404,
+                message: 'Mauvais endPoint !'
             })
         });
 };

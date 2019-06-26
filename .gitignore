@@ -63,3 +63,5 @@ typings/
 # custom
 .DS_Store
 .idea
+*.properties
+.scannerwork
