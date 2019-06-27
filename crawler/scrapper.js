@@ -101,7 +101,7 @@ function APIinsert (collection, object) {
     request.post({
             url: baseURL + collection,
             headers: {
-                'Authorization': userToken
+                'Authorization': 'Bearer ' + userToken
             },
             json: object
         },
