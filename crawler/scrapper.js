@@ -107,9 +107,9 @@ function APIinsert (collection, object) {
         },
         function (error, response) {
             if (!error) {
-                console.log('OK : ' + response.statusCode);
+                console.log(response.statusCode);
             } else {
-                console.log('error');
+                console.log(error);
             }
         }
     );
