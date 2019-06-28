@@ -1,5 +1,6 @@
 // Dépendances
-require('dotenv').config();
+require('dotenv').config({ path: 'config/.env' });
+const routes = require('../routes');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');

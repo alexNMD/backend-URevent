@@ -167,6 +167,7 @@ var homeParsing = new Crawler({
     }
 });
 
+
 var eventParsing = new Crawler({
     maxConnections: 10,
     callback: function (error, res, done) {
@@ -223,9 +224,11 @@ var eventParsing = new Crawler({
                 var location = response;
                 let sortedTags = formatTags(tags);
                 APIinsert('tags', sortedTags);
-
                 var evenement = new Event(name, address, description, price, img, baseURL, tags, start, end, location);
                 APIinsert('events', evenement);
+
+                // for testing
+                return evenement;
                 // console.log(evenement);
             })
         }
@@ -233,17 +236,18 @@ var eventParsing = new Crawler({
     }
 });
 
+
 // Fonctionnement normal ->
 console.log(homeURL);
-console.log('Scrapper en attente...');
-cron.schedule('0 0 0 * * *', () => {
-    console.log('Lancement... DATE de démarrage : ' + new Date());
-    paginationParsing.queue(homeURL);
-});
+// console.log('Scrapper en attente...');
+// cron.schedule('0 0 0 * * *', () => {
+//     console.log('Lancement... DATE de démarrage : ' + new Date());
+//     paginationParsing.queue(homeURL);
+// });
 
 
 // test unitaire ->
-// eventParsing.queue("https://www.parisbouge.com/event/212370");
+eventParsing.queue("https://www.parisbouge.com/event/212370");
 
 // TODO : Reformater les tags pour une récupération plus efficace (suppression des accents, des espaces...)
 // TODO : Monter l'interface Admin (BO)

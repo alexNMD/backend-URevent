@@ -1,17 +1,19 @@
 const expect = require('chai').expect;
-const routes = require('../api/api');
+const client = require('../api/server/server');
+const routes = require('../api/routes');
+
 const supertest = require("supertest");
 var should = require("should");
 
 const userToken = process.env.userToken;
 const PORT = process.env.PORT;
 let url = 'http://localhost:' + PORT + '/api';
+// let urlprod = "http://api-urevent.herokuapp.com/api"
 let server = supertest.agent(url);
-
 // FORCE QUIT NODE SERVER : "killall node"
 
 describe('API test', () => {
-    it('Doit retourner tous les événements (avec token)', function(done) {
+    it('GET events', function(done) {
         // Test Get All Events with token
         server
             .get("/events")
@@ -53,4 +55,4 @@ describe('API test', () => {
 
 });
 
-// TODO : Faire plus de test
+// TODO : Faire plus de test (et surtout fonctionnels !!)

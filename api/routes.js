@@ -1,6 +1,7 @@
 const ObjectId = require('mongodb').ObjectID;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const swaggerDoc = require('../swagger/swaggerDoc');
 
 const initializeRoutes = (app, database) => {
     // Déclaration des collections
@@ -467,6 +468,9 @@ const initializeRoutes = (app, database) => {
                 res.status(200).send({item})
             })
         });
+
+    // for swagger documentation
+    swaggerDoc(app);
 
     app.route('*')
         .get(function (req, res) {

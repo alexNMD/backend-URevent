@@ -1,0 +1,134 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Documentation pour l'api UR event",
+    "description": "A destination des développeurs front pour l'intégration sur l'application Xamarin",
+    "version": "1.0.0"
+  },
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "Events",
+      "description": "Intéraction avec les événements"
+    }
+  ],
+  "schemes": [
+    "http", "https"
+  ],
+  "paths": {
+    "/events": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Obtenir tous les événements de la base",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "produces": ["application/json"],
+        "tags": [
+          "Events"
+        ],
+        "summary": "Ajouter un nouvel événement",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "body",
+            "description": "Nom de l'événement",
+            "required": true,
+            "schema": {}
+          },
+          {
+            "name": "address",
+            "in": "body",
+            "description": "Adresse de l'événement",
+            "required": true,
+            "schema": {}
+          },
+          {
+            "name": "description",
+            "in": "body",
+            "description": "Description de l'événement",
+            "required": true,
+            "schema": {}
+          },
+          {
+            "name": "price",
+            "in": "body",
+            "description": "Prix de l'événement",
+            "required": true,
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          },
+          "400": {
+            "description": "Failed. Bad post data.",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/events/{id}": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Obtenir un événement par son ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de l'événement",
+            "required": true,
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          },
+          "404": {
+            "description": "Failed. Event not found.",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Supprimer un événement par son ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de l'événement à supprimer",
+            "required": true,
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          },
+          "404": {
+            "description": "Failed. Event not found.",
+            "content": {}
+          }
+        }
+      }
+    }
+  }
+
+}
