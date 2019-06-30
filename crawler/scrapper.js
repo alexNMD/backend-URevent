@@ -1,7 +1,7 @@
+require('dotenv').config({ path: 'config/.env' });
 var Crawler = require("crawler");
 var request = require('request');
 var Event = require('./models/Event');
-var Geocoding = require('./geocoding');
 var EventsLogger = require('./EventsLogger');
 let eventCount = 0;
 var urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-05-04&date_end=2019-05-04&page=23";
@@ -220,17 +220,10 @@ var eventParsing = new Crawler({
                 }
             });
 
-            Geocoding(address, function(response){
-                var location = response;
-                let sortedTags = formatTags(tags);
-                APIinsert('tags', sortedTags);
-                var evenement = new Event(name, address, description, price, img, baseURL, tags, start, end, location);
-                APIinsert('events', evenement);
-
-                // for testing
-                return evenement;
-                // console.log(evenement);
-            })
+            let sortedTags = formatTags(tags);
+            APIinsert('tags', sortedTags);
+            var evenement = new Event(name, address, description, price, img, baseURL, tags, start, end);
+            APIinsert('events', evenement);
         }
         done();
     }

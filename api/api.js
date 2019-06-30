@@ -8,27 +8,27 @@
 			const database = client.db('urevent');
 
 			// SANS TOKEN AUTHORIZATION
-			// server.app.use(verifToken, function (req, res, next) {
-			// 	if (req.token === 'excludePath') {
-			// 		next();
-			// 	} else {
-			// 		jwt.verify(req.token, 'userKey', (err, auth) => {
-			// 			if (err) {
-			// 				jwt.verify(req.token, 'adminKey', (err, auth) => {
-			// 					if (err) {
-			// 						res.status(401).send({
-			// 							message: 'Veuillez vous connecter !!!'
-			// 						})
-			// 					} else {
-			// 						next();
-			// 					}
-			// 				})
-			// 			} else {
-			// 				next();
-			// 			}
-			// 		});
-			// 	}
-			// });
+			server.app.use(verifToken, function (req, res, next) {
+				if (req.token === 'excludePath') {
+					next();
+				} else {
+					jwt.verify(req.token, 'userKey', (err, auth) => {
+						if (err) {
+							jwt.verify(req.token, 'adminKey', (err, auth) => {
+								if (err) {
+									res.status(401).send({
+										message: 'Veuillez vous connecter !!!'
+									})
+								} else {
+									next();
+								}
+							})
+						} else {
+							next();
+						}
+					});
+				}
+			});
 			routes(server.app, database);
 		}).catch(function (err) {
 			console.log('Impossible de se connecter à MongoDB.');

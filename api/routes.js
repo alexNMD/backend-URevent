@@ -1,6 +1,9 @@
 const ObjectId = require('mongodb').ObjectID;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+var jwtDecode = require('jwt-decode');
+var Geocoding = require('./geocoding');
+var Event = require('../crawler/models/Event');
 const swaggerDoc = require('../swagger/swaggerDoc');
 
 const initializeRoutes = (app, database) => {
@@ -14,39 +17,60 @@ const initializeRoutes = (app, database) => {
 
     app.route('/api/events')
         .post(function (req, res) {
-            eventsCollection.insertOne(req.body, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    res.status(400).send({
-                        message: err
-                    });
-                }
-                let eventKey = result.ops[0]._id;
-                salonCollection.insertOne(
-                    {
-                        'event-key': eventKey,
-                        'comments': [{ }]
-                    }, (err, result) => {
+            // Fields expected : name, description, address
+            if (!req.body.name || !req.body.description || !req.body.address) {
+                res.status(400).send({
+                    message: "champs manquants !"
+                })
+            } else {
+                let evenement = new Event(req.body);
+                evenement.name = req.body.name;
+                evenement.address = req.body.address;
+                evenement.description = req.body.description;
+                evenement.price = req.body.price;
+                evenement.img = req.body.img;
+                evenement.baseURL = req.body.baseURL;
+                evenement.tags = req.body.tags;
+                evenement.start = req.body.start;
+                evenement.end = req.body.end;
+                Geocoding(req.body.address, function (response) {
+                    evenement.location = response;
+                    console.log(evenement);
+                    eventsCollection.insertOne(evenement, (err, result) => {
                         if (err) {
                             console.log(err);
                             res.status(400).send({
                                 message: err
                             });
                         }
-                        let salonKey = result.ops[0]._id;
-                        eventsCollection.findOneAndUpdate({ _id: eventKey },{ $set: { 'salon-key': salonKey } }, (err, result) => {
-                            if (err) {
-                                console.log(err);
-                                res.status(400).send({
-                                    message: err
-                                });
-                            }
-                            res.status(201).send({
-                                message : result.value
+                        let eventKey = result.ops[0]._id;
+                        salonCollection.insertOne(
+                            {
+                                'eventKey': eventKey,
+                                'comments': [{ }]
+                            }, (err, result) => {
+                                if (err) {
+                                    console.log(err);
+                                    res.status(400).send({
+                                        message: err
+                                    });
+                                }
+                                let salonKey = result.ops[0]._id;
+                                eventsCollection.findOneAndUpdate({ _id: eventKey },{ $set: { 'salonKey': salonKey } }, (err, result) => {
+                                    if (err) {
+                                        console.log(err);
+                                        res.status(400).send({
+                                            message: err
+                                        });
+                                    }
+                                    res.status(201).send({
+                                        message : result.value
+                                    })
+                                })
                             })
-                        })
                     })
-            })
+                });
+            }
         })
         .get(function (req, res) {
             eventsCollection.find().toArray((err, items) => {
@@ -93,7 +117,7 @@ const initializeRoutes = (app, database) => {
                 })
             } else {
                 var key = new ObjectId(req.params.key);
-                salonCollection.deleteOne({ 'event-key': key }).then(function () {
+                salonCollection.deleteOne({ 'eventKey': key }).then(function () {
                     eventsCollection.deleteOne({ _id: key }, (err, item) => {
                         if (err) {
                             console.log(err);
@@ -110,6 +134,60 @@ const initializeRoutes = (app, database) => {
                 });
 
             }
+        });
+    app.route('/api/events/:key/comment')
+        .post(function (req, res) {
+            if (req.params.key.length !== 24) {
+                res.status(400).send({
+                    message: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
+                })
+            } else {
+                if (!req.body.comment) {
+                    res.status(400).send({
+                        message: "Commentaire vide !"
+                    })
+                } else {
+                    let key = new ObjectId(req.params.key);
+                    let comment = req.body.comment;
+                    let user = jwtDecode(req.token).user;
+                    let commentaire = {
+                        user: user,
+                        comment: comment
+                    };
+                    eventsCollection.findOne({ _id: key }, (err, item) => {
+                        if (err) {
+                            console.log(err);
+                            res.status(400).send({
+                                message: err
+                            });
+                        }
+                        if (!item) {
+                            res.status(404).send({
+                                message: 'Document non existant'
+                            })
+                        }
+                        let salonKey = item.salonKey;
+                        salonCollection.findOneAndUpdate({ _id: salonKey },
+                            {
+                                $push:
+                                    {
+                                        'comments': commentaire
+                                    }
+                            }, (err, result) => {
+                            if (err) {
+                                console.log(err);
+                                res.status(400).send({
+                                    message: err
+                                });
+                            }
+                            res.status(201).send({
+                                message : result.value
+                            })
+                        })
+                    })
+                }
+            }
+
         });
 
     app.route('/api/tags')
@@ -494,3 +572,5 @@ function verifAdmin(req, res, next) {
 }
 
 module.exports = initializeRoutes;
+
+// TODO : refaire fonctionner les tokens (avec swagger notamment) et aussi pour l'ajout de commentaire

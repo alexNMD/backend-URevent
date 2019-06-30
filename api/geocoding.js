@@ -3,9 +3,6 @@ require('dotenv').config();
 
 const apiK = process.env.GOOGLE_APIK;
 
-urlTest = "https://maps.googleapis.com/maps/api/geocode/json?address=32+quai+dAusterlitz,+75013,+Paris,+France&key=" + apiK;
-
-
 var geocoding = function(address, callback) {
 	let location;
 	address = address.replace(/[^a-zA-Z0-9]/g,'+');
