@@ -3,6 +3,7 @@
 	const routes = require('./routes');
 	const MongoClient = require('mongodb').MongoClient;
 
+
 		MongoClient.connect(server.url, { useNewUrlParser: true }).then(function (client) {
 			console.log('Connexion établie à MongoDB.');
 			const database = client.db('urevent');
@@ -30,10 +31,13 @@
 				}
 			});
 			routes(server.app, database);
+			console.log('API lancée !');
+
 		}).catch(function (err) {
 			console.log('Impossible de se connecter à MongoDB.');
 			console.log(err);
 		});
+
 	function verifToken(req, res, next) {
 		const excludePath = [
 			'/api/users/register',

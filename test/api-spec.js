@@ -1,15 +1,12 @@
 const expect = require('chai').expect;
-const client = require('../api/server/server');
-const routes = require('../api/routes');
-
+const client = require('../api/api');
+require('dotenv').config({ path: 'config/travis.env' });
 const supertest = require("supertest");
 var should = require("should");
 
 const userToken = process.env.userToken;
 const PORT = process.env.PORT;
-let url = 'http://localhost:' + PORT + '/api';
-// let urlprod = "http://api-urevent.herokuapp.com/api"
-let server = supertest.agent(url);
+let server = supertest.agent('http://localhost:' + PORT + '/api');
 // FORCE QUIT NODE SERVER : "killall node"
 
 describe('API test', () => {

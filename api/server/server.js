@@ -1,5 +1,5 @@
 // Dépendances
-require('dotenv').config({ path: 'config/.env' });
+require('dotenv').config({ path: 'config/local.env' });
 const routes = require('../routes');
 var express = require('express');
 var app = express();
@@ -12,9 +12,10 @@ const PORT = process.env.PORT;
 const url = process.env.DB_URL;
 const devStatus = process.env.NODE_ENV;
 
-// MongoDB connection
+
+// Server connexion
 app.listen(PORT, function () {
-	console.log('API lancée ! || PORT: ' + PORT);
+	console.log('Server ON ! || PORT: ' + PORT);
 	console.log('Status: ' + devStatus);
 	app.use(function (req, res, next) {
 		// Website you wish to allow to connect

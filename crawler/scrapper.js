@@ -1,4 +1,4 @@
-require('dotenv').config({ path: 'config/.env' });
+require('dotenv').config({ path: 'config/local.env' });
 var Crawler = require("crawler");
 var request = require('request');
 var Event = require('./models/Event');
@@ -93,7 +93,7 @@ function APIinsert (collection, object) {
     const userToken = process.env.userToken;
     const devStatus = process.env.NODE_ENV;
     let baseURL;
-    if (devStatus === 'test') {
+    if (devStatus === 'test' || devStatus === 'PRE_PROD') {
         baseURL = 'http://localhost:8080/api/';
     } else {
         baseURL = 'https://api-urevent.herokuapp.com/api/';
