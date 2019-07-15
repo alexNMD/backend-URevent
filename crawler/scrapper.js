@@ -7,15 +7,13 @@ let eventCount = 0;
 var urlTest = "https://www.parisbouge.com/search?type=event&category=soiree&date_start=2019-05-04&date_end=2019-05-04&page=23";
 var cron = require('node-cron');
 
-var currentDate = dateFormat(new Date(), 0);
-var futurDate = dateFormat(new Date(), 0);
-
-
-var homeURL =
-    "https://www.parisbouge.com/search?type=event&category=soiree&date_start="
-    + currentDate
-    + "&date_end="
-    + futurDate;
+// var currentDate = dateFormat(new Date(), 0);
+// var futurDate = dateFormat(new Date(), 0);
+// var homeURL =
+//     "https://www.parisbouge.com/search?type=event&category=soiree&date_start="
+//     + currentDate
+//     + "&date_end="
+//     + futurDate;
 
 function dateFormat(date, nbj)
 {
@@ -115,123 +113,140 @@ function APIinsert (collection, object) {
     );
 }
 
-var paginationParsing = new Crawler({
-    maxConnections: 10,
-    callback: function (error, res, done) {
-        if (error) {
-            console.log(error);
-        } else {
-            var $ = res.$;
 
-            let pageItem;
-            let pageCount;
-            if ($('.page').length !== 0) {
-                pageItem = $('.page').length - 2;
-                pageCount = parseInt($('.page')[pageItem].children[0].children[0].data);
+
+
+
+module.exports = function (launchValues) {
+    var homeURL =
+        "https://www.parisbouge.com/search?type=event&category=soiree&date_start="
+        + launchValues.start
+        + "&date_end="
+        + launchValues.end;
+
+    var paginationParsing = new Crawler({
+        maxConnections: 10,
+        callback: function (error, res, done) {
+            if (error) {
+                console.log(error);
             } else {
-                pageCount = 1;
-            }
+                var $ = res.$;
 
-
-            for (i = 1; i <= pageCount; i++) {
-                homeParsing.queue(homeURL + '&page=' + i);
-            }
-
-        }
-        done();
-    }
-});
-
-var homeParsing = new Crawler({
-    maxConnections: 10,
-    // This will be called for each crawled page
-    callback: function (error, res, done) {
-        if (error) {
-            console.log(error);
-        } else {
-            // Initilisation pour le compteur
-            var $ = res.$;
-            links = $('a.text-title');
-            var z = 0;
-            $(links).each(function (i, link) {
-                url = "https://www.parisbouge.com" + link.attribs.href;
-
-                if (url.length < 40) {
-                    eventParsing.queue({uri: url, parameter1: url});
-                    eventCount++;
+                let pageItem;
+                let pageCount;
+                if ($('.page').length !== 0) {
+                    pageItem = $('.page').length - 2;
+                    pageCount = parseInt($('.page')[pageItem].children[0].children[0].data);
+                } else {
+                    pageCount = 1;
                 }
-            });
-        EventsLogger(eventCount, currentDate, futurDate);
-        }
-        done();
-    }
-});
 
 
-var eventParsing = new Crawler({
-    maxConnections: 10,
-    callback: function (error, res, done) {
-        if (error) {
-            console.log(error);
-        } else {
-            var $ = res.$;
-
-            var name = $('h1.text-title').text();
-            var date_start = $('a.text-default')[0].children[0].children[0].data;
-            var date_end = $('a.text-default')[1].children[0].data;
-            var address = $('.event-place-address').text();
-            var description = $('#event-detail-infos-content').text();
-
-            const regexp = RegExp('^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$');
-            var stringP = $('p').toString();
-            indexStart = stringP.indexOf('&#xE0;');
-            if (stringP.substring(indexStart+7, indexStart+12).match(regexp)) {
-                hours_start = stringP.substring(indexStart+7, indexStart+12);
-            } else {
-                hours_start = 'Aucune infos';
-            }
-            stringP = stringP.replace('&#xE0;', '');
-            indexEnd = stringP.indexOf('&#xE0;');
-            if (stringP.substring(indexEnd+7, indexEnd+12).match(regexp)) {
-                hours_end = stringP.substring(indexEnd+7, indexEnd+12);
-            } else {
-                hours_end = 'Aucune infos';
-            }
-
-            var start = { date_start, hours_start };
-            var end = { date_end, hours_end };
-
-            if ($('p')[8].children[0].data === 'tarif') {
-                price = $('p')[9].children[0].data
-            } else {
-                price = $('p')[8].children[0].data
-            }
-            if (typeof $('.event-cover-picture')[0] !== 'undefined') {
-                var img = $('.event-cover-picture')[0].attribs.src;
-            } else {
-                var img = '';
-            }
-            var baseURL = res.options.parameter1;
-            var tags = [];
-            var styles = $('.label-event-style');
-            styles.each(function (i, style) {
-                if (style.children.length !== 0) {
-                    tags[i] = style.children[0].data;
+                for (i = 1; i <= pageCount; i++) {
+                    homeParsing.queue(homeURL + '&page=' + i);
                 }
-            });
 
-            let sortedTags = formatTags(tags);
-            APIinsert('tags', sortedTags);
-            var evenement = new Event(name, address, description, price, img, baseURL, tags, start, end);
-            APIinsert('events', evenement);
+            }
+            done();
         }
-        done();
-    }
-});
+    });
+
+    var homeParsing = new Crawler({
+        maxConnections: 10,
+        // This will be called for each crawled page
+        callback: function (error, res, done) {
+            if (error) {
+                console.log(error);
+            } else {
+                // Initilisation pour le compteur
+                var $ = res.$;
+                links = $('a.text-title');
+                var z = 0;
+                $(links).each(function (i, link) {
+                    url = "https://www.parisbouge.com" + link.attribs.href;
+
+                    if (url.length < 40) {
+                        eventParsing.queue({uri: url, parameter1: url});
+                        eventCount++;
+                    }
+                });
+                EventsLogger(eventCount, launchValues.start, launchValues.end);
+            }
+            done();
+        }
+    });
 
 
-// Fonctionnement normal ->
-console.log(homeURL);
+    var eventParsing = new Crawler({
+        maxConnections: 10,
+        callback: function (error, res, done) {
+            if (error) {
+                console.log(error);
+            } else {
+                var $ = res.$;
+
+                var name = $('h1.text-title').text();
+                var date_start = $('a.text-default')[0].children[0].children[0].data;
+                var date_end = $('a.text-default')[1].children[0].data;
+                var address = $('.event-place-address').text();
+                var description = $('#event-detail-infos-content').text();
+
+                const regexp = RegExp('^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$');
+                var stringP = $('p').toString();
+                indexStart = stringP.indexOf('&#xE0;');
+                if (stringP.substring(indexStart+7, indexStart+12).match(regexp)) {
+                    hours_start = stringP.substring(indexStart+7, indexStart+12);
+                } else {
+                    hours_start = 'Aucune infos';
+                }
+                stringP = stringP.replace('&#xE0;', '');
+                indexEnd = stringP.indexOf('&#xE0;');
+                if (stringP.substring(indexEnd+7, indexEnd+12).match(regexp)) {
+                    hours_end = stringP.substring(indexEnd+7, indexEnd+12);
+                } else {
+                    hours_end = 'Aucune infos';
+                }
+
+                var start = { date_start, hours_start };
+                var end = { date_end, hours_end };
+
+                if ($('p')[8].children[0].data === 'tarif') {
+                    price = $('p')[9].children[0].data
+                } else {
+                    price = $('p')[8].children[0].data
+                }
+                if (typeof $('.event-cover-picture')[0] !== 'undefined') {
+                    var img = $('.event-cover-picture')[0].attribs.src;
+                } else {
+                    var img = '';
+                }
+                var baseURL = res.options.parameter1;
+                var tags = [];
+                var styles = $('.label-event-style');
+                styles.each(function (i, style) {
+                    if (style.children.length !== 0) {
+                        tags[i] = style.children[0].data;
+                    }
+                });
+
+                let sortedTags = formatTags(tags);
+                APIinsert('tags', sortedTags);
+                var evenement = new Event(name, address, description, price, img, baseURL, tags, start, end);
+                APIinsert('events', evenement);
+            }
+            done();
+        }
+    });
+
+    // Fonctionnement normal ->
+    console.log(homeURL);
+    paginationParsing.queue(homeURL);
+};
+
+
+
+
+
 // console.log('Scrapper en attente...');
 // cron.schedule('0 0 0 * * *', () => {
 //     console.log('Lancement... DATE de démarrage : ' + new Date());
@@ -240,7 +255,7 @@ console.log(homeURL);
 
 
 // test unitaire ->
-eventParsing.queue("https://www.parisbouge.com/event/212370");
+// eventParsing.queue("https://www.parisbouge.com/event/212370");
 
 // TODO : Reformater les tags pour une récupération plus efficace (suppression des accents, des espaces...)
 // TODO : Monter l'interface Admin (BO)

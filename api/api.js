@@ -3,7 +3,6 @@
 	const routes = require('./routes');
 	const MongoClient = require('mongodb').MongoClient;
 
-
 		MongoClient.connect(server.url, { useNewUrlParser: true }).then(function (client) {
 			console.log('Connexion établie à MongoDB.');
 			const database = client.db('urevent');
@@ -32,7 +31,6 @@
 			});
 			routes(server.app, database);
 			console.log('API lancée !');
-
 		}).catch(function (err) {
 			console.log('Impossible de se connecter à MongoDB.');
 			console.log(err);
@@ -47,7 +45,9 @@
 			'/api-docs/swagger-ui.css',
 			'/api-docs/swagger-ui-bundle.js',
 			'/api-docs/swagger-ui-standalone-preset.js',
-			'/api-docs/swagger-ui-init.js'
+			'/api-docs/swagger-ui-init.js',
+			'/scrapper',
+			'/scrapper/launch'
 		];
 		if (excludePath.indexOf(req.path) !== -1) {
 			req.token = 'excludePath';
@@ -67,3 +67,5 @@
 			}
 		}
 	}
+
+	module.exports = server.app;

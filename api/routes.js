@@ -5,6 +5,7 @@ var jwtDecode = require('jwt-decode');
 var Geocoding = require('./geocoding');
 var Event = require('../crawler/models/Event');
 const swaggerDoc = require('../swagger/swaggerDoc');
+const ejs = require('ejs');
 
 const initializeRoutes = (app, database) => {
     // Déclaration des collections
@@ -546,6 +547,17 @@ const initializeRoutes = (app, database) => {
                 res.status(200).send({item})
             })
         });
+
+    app.route('/scrapper').get(function (req, res) {
+        res.render('pages/scrapper-index');
+    });
+    app.route('/scrapper/launch').post(function (req, res) {
+
+        var launchValues = {'start': req.body.start_date, 'end': req.body.end_date};
+        // console.log(launchValues);
+        require('../crawler/scrapper')(launchValues);
+        res.render('pages/scrapper-launched', { launchValues: launchValues})
+    });
 
     // for swagger documentation
     swaggerDoc(app);
