@@ -7,6 +7,8 @@ var Event = require('../crawler/models/Event');
 const swaggerDoc = require('../swagger/swaggerDoc');
 const ejs = require('ejs');
 
+var scrapper = require('../crawler/scrapper');
+
 const initializeRoutes = (app, database) => {
     // Déclaration des collections
     const eventsCollection = database.collection('Evenement');
@@ -36,7 +38,7 @@ const initializeRoutes = (app, database) => {
                 evenement.end = req.body.end;
                 Geocoding(req.body.address, function (response) {
                     evenement.location = response;
-                    console.log(evenement);
+                    // console.log(evenement);
                     eventsCollection.insertOne(evenement, (err, result) => {
                         if (err) {
                             console.log(err);
@@ -552,11 +554,17 @@ const initializeRoutes = (app, database) => {
         res.render('pages/scrapper-index');
     });
     app.route('/scrapper/launch').post(function (req, res) {
-
-        var launchValues = {'start': req.body.start_date, 'end': req.body.end_date};
-        // console.log(launchValues);
-        require('../crawler/scrapper')(launchValues);
-        res.render('pages/scrapper-launched', { launchValues: launchValues})
+        var launchValues = {
+            'start': req.body.start_date,
+            'end': req.body.end_date
+        };
+        scrapper(launchValues, function (response) {
+            res.render('pages/scrapper-status',
+                {
+                    launchValues: launchValues,
+                    eventsRecovered: response
+                })
+        });
     });
 
     // for swagger documentation
