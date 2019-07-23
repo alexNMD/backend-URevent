@@ -18,6 +18,7 @@ const initializeRoutes = (app, database) => {
     const salonCollection = database.collection('Salon');
     const testCollection = database.collection('test');
 
+    // Opération sur tous les événements
     app.route('/api/events')
         .post(function (req, res) {
             // Fields expected : name, description, address
@@ -89,6 +90,7 @@ const initializeRoutes = (app, database) => {
                 })
             })
         });
+    // Opération sur un événement en particulier
     app.route('/api/events/:key')
         .get(function (req, res) {
             if (req.params.key.length !== 24) {
@@ -138,6 +140,7 @@ const initializeRoutes = (app, database) => {
 
             }
         });
+    // Enregistrement d'un commentaire sur un événement en particulier
     app.route('/api/events/:key/comment')
         .post(function (req, res) {
             if (req.params.key.length !== 24) {
@@ -193,6 +196,7 @@ const initializeRoutes = (app, database) => {
 
         });
 
+    // Opération sur tous les tags
     app.route('/api/tags')
         .post(function (req, res) {
             let tags = Object.values(req.body);
@@ -234,6 +238,7 @@ const initializeRoutes = (app, database) => {
                 })
             })
         });
+    // Opération sur un tag en particulier
     app.route('/api/tags/:key')
         .get(function (req, res) {
             if (req.params.key.length !== 24) {
@@ -277,6 +282,7 @@ const initializeRoutes = (app, database) => {
             }
         });
 
+    // Opération sur tous les utilisateurs (action administrateur)
     app.route('/api/users')
         .get(verifAdmin, function (req, res) {
             usersCollection.find().toArray((err, items) => {
@@ -292,6 +298,7 @@ const initializeRoutes = (app, database) => {
                 })
             })
         });
+    // Opération sur un utilisateur en particulier (delete : action administrateur)
     app.route('/api/users/:key')
         .get(function (req, res) {
             if (req.params.key.length !== 24) {
@@ -334,6 +341,7 @@ const initializeRoutes = (app, database) => {
                 })
             }
         });
+    // Enregistrement en tant qu'utilisateur
     app.route('/api/users/register')
         .post(function (req, res) {
             // Fields expected : lastname, firstname, email, password
@@ -373,6 +381,7 @@ const initializeRoutes = (app, database) => {
                 })
             }
         });
+    // Connexion en tant qu'utilisateur
     app.route('/api/users/login')
         .post(function (req, res) {
             usersCollection.findOne({ email: req.body.email }, (err, user) => {
@@ -418,7 +427,7 @@ const initializeRoutes = (app, database) => {
             })
         });
 
-
+    // Opération sur tous les produits
     app.route('/api/products')
         .post(function (req, res) {
             productsCollection.insertOne(req.body, (err, result) => {
@@ -447,6 +456,7 @@ const initializeRoutes = (app, database) => {
                 })
             })
         });
+    // Opération sur un produit en particulier
     app.route('/api/products/:key')
         .get(function (req, res) {
             if (req.params.key.length !== 24) {
@@ -490,7 +500,7 @@ const initializeRoutes = (app, database) => {
             }
         });
 
-    // TEST
+    // Routes TEST
     app.route('/api/test')
         .post(function (req, res) {
             testCollection.insertOne(req.body, (err, result) => {
@@ -550,6 +560,7 @@ const initializeRoutes = (app, database) => {
             })
         });
 
+    // Opération de scrapping événement
     app.route('/scrapper').get(function (req, res) {
         res.render('pages/scrapper-index');
     });
@@ -558,18 +569,14 @@ const initializeRoutes = (app, database) => {
             'start': req.body.start_date,
             'end': req.body.end_date
         };
-        scrapper(launchValues, function (response) {
-            res.render('pages/scrapper-status',
-                {
-                    launchValues: launchValues,
-                    eventsRecovered: response
-                })
-        });
+        scrapper(launchValues);
+        res.render('pages/scrapper-status', { launchValues: launchValues });
     });
 
     // for swagger documentation
     swaggerDoc(app);
 
+    // Page 404
     app.route('*')
         .get(function (req, res) {
             res.status(404).send({

@@ -114,8 +114,7 @@ function APIinsert (collection, object) {
 }
 
 
-
-var scrapper = function(launchValues, callback) {
+var scrapper = function(launchValues) {
 
     var homeURL =
         "https://www.parisbouge.com/search?type=event&category=soiree&date_start="
@@ -141,16 +140,14 @@ var scrapper = function(launchValues, callback) {
                     pageCount = 1;
                 }
 
-
                 for (i = 1; i <= pageCount; i++) {
                     homeParsing.queue(homeURL + '&page=' + i);
                 }
-
             }
             done();
+
         }
     });
-
 
     var homeParsing = new Crawler({
         maxConnections: 10,
@@ -167,25 +164,23 @@ var scrapper = function(launchValues, callback) {
                     url = "https://www.parisbouge.com" + link.attribs.href;
 
                     if (url.length < 40) {
-                        eventParsing.queue({uri: url, parameter1: url});
+                        eventParsing.queue({ uri: url, parameter1: url });
                         eventCount++;
                     }
                 });
                 EventsLogger(eventCount, launchValues.start, launchValues.end);
             }
             done();
-            return callback(eventCount);
         }
     });
-
 
     var eventParsing = new Crawler({
         maxConnections: 10,
         callback: function (error, res, done) {
-
             if (error) {
                 console.log(error);
             } else {
+
                 var $ = res.$;
 
                 var name = $('h1.text-title').text();
@@ -246,7 +241,6 @@ var scrapper = function(launchValues, callback) {
     // Fonctionnement normal ->
     console.log(homeURL);
     paginationParsing.queue(homeURL);
-
 };
 
 module.exports = scrapper;

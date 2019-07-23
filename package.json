@@ -27,12 +27,15 @@
     "swagger-jsdoc": "^3.2.9",
     "swagger-ui-express": "^4.0.6"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "istanbul": "^0.4.5"
+  },
   "scripts": {
     "start": "node api/api.js",
     "test": "mocha --exit",
     "dev": "node crawler/scrapper.js & npm start",
-    "scrapper": "node crawler/scrapper.js"
+    "scrapper": "node crawler/scrapper.js",
+    "test-coverage": "istanbul cover --include-all-sources test/api-spec.js && istanbul check-coverage"
   },
   "repository": {
     "type": "git",

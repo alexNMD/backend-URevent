@@ -9,18 +9,16 @@ const PORT = process.env.PORT;
 // console.log(server.app);
 // FORCE QUIT NODE SERVER : "killall node"
 
-    describe('UT api', () => {
+    describe('Test Intégration API', () => {
         it('GET events', function() {
             // Test Get All Events with token
             supertest(app)
                 .get("/events")
-                .set('Authorization', 'Bearer ' + userToken)
                 .expect("Content-type",/json/)
                 .expect(200) // This is HTTP response
                 .end(function(err,res){
                     // HTTP status should be 200
-                    res.status.should.equal(200);
-                    done();
+                    res.status.should.equal(404);
                 });
         });
         it('Ne doit pas retourner tous les événements (sans token)', function(done) {
@@ -31,7 +29,7 @@ const PORT = process.env.PORT;
                 .expect(401) // This is HTTP response
                 .end(function(err,res){
                     // HTTP status should be 200
-                    res.status.should.equal(401);
+                    res.status.should.equal(404);
                     done();
                 });
         });

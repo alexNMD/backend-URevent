@@ -7,7 +7,6 @@
 			console.log('Connexion établie à MongoDB.');
 			const database = client.db('urevent');
 
-			// SANS TOKEN AUTHORIZATION
 			server.app.use(verifToken, function (req, res, next) {
 				if (req.token === 'excludePath') {
 					next();
