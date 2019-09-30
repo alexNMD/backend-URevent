@@ -3,9 +3,6 @@ require('dotenv').config();
 
 const apiK = process.env.GOOGLE_APIK;
 
-urlTest = 'https://maps.googleapis.com/maps/api/geocode/json?address=32+quai+d’Austerlitz,+75013,+Paris,+France&key=AIzaSyDKAYgVkJUMbQJ6KzkQWuXfgntS-vRGtjc';
-
-
 var geocoding = function(address, callback) {
 	let location;
 	address = address.replace(/[^a-zA-Z0-9]/g,'+');
@@ -22,6 +19,6 @@ var geocoding = function(address, callback) {
 		}
 		return callback(location);
 	});
-}
+};
 
 module.exports = geocoding;

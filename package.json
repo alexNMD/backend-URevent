@@ -5,23 +5,37 @@
   "main": "api.js",
   "dependencies": {
     "bcrypt": "^3.0.6",
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.3",
     "crawler": "^1.2.1",
     "dotenv": "^8.0.0",
-    "ejs": "^2.6.1",
-    "express": "^4.16.4",
-    "firebase-admin": "^7.1.1",
-    "firebase-functions-helper": "^0.7.0",
+    "ejs": "^2.6.2",
+    "express": "^4.17.1",
+    "firebase-admin": "^7.4.0",
+    "firebase-functions-helper": "^0.7.1",
     "jquery": "^3.4.1",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^3.2.5",
-    "mysql": "^2.16.0"
+    "jwt-decode": "^2.2.0",
+    "mocha": "^6.1.4",
+    "mongodb": "^3.2.7",
+    "mysql": "^2.17.1",
+    "node-cron": "^2.0.3",
+    "should": "^13.2.3",
+    "supertest": "^4.0.2",
+    "swagger": "^0.7.5",
+    "swagger-jsdoc": "^3.2.9",
+    "swagger-ui-express": "^4.0.6"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "istanbul": "^0.4.5"
+  },
   "scripts": {
     "start": "node api/api.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --exit",
+    "dev": "node crawler/scrapper.js & npm start",
+    "scrapper": "node crawler/scrapper.js",
+    "test-coverage": "istanbul cover --include-all-sources test/api-spec.js && istanbul check-coverage"
   },
   "repository": {
     "type": "git",

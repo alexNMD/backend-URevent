@@ -1,0 +1,422 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Documentation pour l'api UR event",
+    "description": "A destination des développeurs front pour l'intégration sur l'application Xamarin",
+    "version": "1.0.0"
+  },
+  "securityDefinitions": {
+    "bearerToken": {
+      "type": "apiKey",
+      "name": "authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    "bearerToken"
+  ],
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "Events",
+      "description": "Intéraction avec les événements"
+    }
+  ],
+  "schemes": [
+    "http", "https"
+  ],
+  "paths": {
+    "/events": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Obtenir tous les événements de la base",
+        "responses": {
+          "200":{
+            "description":"successful operation",
+            "schema":{
+              "type":"array",
+              "items":{
+                "$ref":"#/definitions/Event"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": ["application/json"],
+        "tags": [
+          "Events"
+        ],
+        "summary": "Ajouter un nouvel événement",
+        "parameters":[
+          {
+            "in":"body",
+            "name":"body",
+            "description":"Information de l'événement",
+            "required":true,
+            "schema":{
+              "$ref":"#/definitions/EventwithoutID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "{ 'message' : 'Veuillez vous connecter' }"
+          }
+        }
+      }
+    },
+    "/events/{id}": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Obtenir un événement par son ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de l'événement",
+            "required": true,
+            "schema": {
+              "$ref":"#/definitions/Event"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref":"#/definitions/Event"
+            }
+          },
+          "404": {
+            "description": "Failed. Event not found."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Supprimer un événement par son ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de l'événement à supprimer",
+            "required": true,
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Failed. Event not found."
+          }
+        }
+      }
+    },
+
+    "/users/register": {
+      "post": {
+        "produces": ["application/json"],
+        "tags": [
+          "Users"
+        ],
+        "summary": "S'enregister en tant qu'utilisateur",
+        "parameters":[
+          {
+            "in":"body",
+            "name":"body",
+            "description":"Information de l'utilisateur",
+            "required":true,
+            "schema":{
+              "$ref":"#/definitions/UserwithoutID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref":"#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+
+    "/users/login": {
+      "post": {
+        "produces": ["application/json"],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Se connecter en tant qu'utilisateur",
+        "parameters":[
+          {
+            "in":"body",
+            "name":"body",
+            "description":"Login de l'utilisateur",
+            "required":true,
+            "schema": {
+              "$ref": "#/definitions/loginUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "message": "email & password GOOD !",
+              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidGVzdEB1cmV2ZW50LmNvbSIsImlhdCI6MTU2MTg5ODI3N30.W3A7COwykncWU0IasYi8vxfiMSvU4Eq__BODrAdvKvs"
+            }
+          },
+          "404": {
+            "description": "Utilisateur introuvable",
+            "examples": {
+              "message": "Utilisateur non existant !"
+            }
+          }
+        }
+      }
+    }
+
+  },
+  "definitions": {
+    "EventwithoutID":{
+      "type":"object",
+      "required":[
+        "name",
+        "address",
+        "description"
+      ],
+      "properties":{
+        "name":{
+          "type":"string",
+          "example":"Jasper James, Project Pablo"
+        },
+        "address":{
+          "type":"string",
+          "example": "2 bis rue des Taillandiers, 75011, Paris, France"
+        },
+        "description": {
+          "type": "string",
+          "example": "description de l'événement..."
+        },
+        "price" : {
+          "type": "string",
+          "example": "13€"
+        },
+        "img": {
+          "type": "string",
+          "example": "https://img3.parisbouge.com/KJ-zciTC778z2SQEsCK1woXknMRN7ebZFZEyUReo6X4/rs:fill:750:375:1/g:ce/ZDMxOTY3ODUtYjhmNi00NDNhLTk5MmQtODhjNzVhYjY2ZDRkLmpwZw.jpg"
+        },
+        "tags": {
+          "type":"array",
+          "items":{
+            "$ref":"#/definitions/TagwithoutID"
+          }
+        },
+        "start": {
+          "type": "object",
+          "properties": {
+            "date_start" : {
+              "type": "string",
+              "example": "samedi 25 mai 2019"
+            },
+            "hours_start": {
+              "type": "string",
+              "example": "23:00"
+            }
+          }
+        },
+        "end": {
+          "type": "object",
+          "properties": {
+            "date_end" : {
+              "type": "string",
+              "example": "dimancge 26 mai 2019"
+            },
+            "hours_end": {
+              "type": "string",
+              "example": "06:00"
+            }
+          }
+        }
+      }
+    },
+
+    "Event": {
+      "type":"object",
+      "properties":{
+        "_id" : {
+          "type": "string",
+          "example": "5d10dc8bc2fd27cda79b5c33"
+        },
+        "name":{
+          "type":"string",
+          "example":"Jasper James, Project Pablo"
+        },
+        "address":{
+          "type":"string",
+          "example": "2 bis rue des Taillandiers, 75011, Paris, France"
+        },
+        "description": {
+          "type": "string",
+          "example": "description de l'événement..."
+        },
+        "price" : {
+          "type": "string",
+          "example": "13€"
+        },
+        "img": {
+          "type": "string",
+          "example": "https://img3.parisbouge.com/KJ-zciTC778z2SQEsCK1woXknMRN7ebZFZEyUReo6X4/rs:fill:750:375:1/g:ce/ZDMxOTY3ODUtYjhmNi00NDNhLTk5MmQtODhjNzVhYjY2ZDRkLmpwZw.jpg"
+        },
+        "tags": {
+          "type":"array",
+          "items":{
+            "$ref":"#/definitions/TagwithoutID"
+          }
+        },
+        "start": {
+          "type": "object",
+          "properties": {
+            "date_start" : {
+              "type": "string",
+              "example": "samedi 25 mai 2019"
+            },
+            "hours_start": {
+              "type": "string",
+              "example": "23:00"
+            }
+          }
+        },
+        "end": {
+          "type": "object",
+          "properties": {
+            "date_end" : {
+              "type": "string",
+              "example": "dimancge 26 mai 2019"
+            },
+            "hours_end": {
+              "type": "string",
+              "example": "06:00"
+            }
+          }
+        },
+        "location" : {
+          "type": "object",
+          "properties": {
+            "lat" : {
+              "type": "number",
+              "example": 48.8536014
+            },
+            "lng" : {
+              "type": "number",
+              "example": "2.3757792"
+            }
+          }
+        }
+      }
+    },
+
+    "TagwithoutID": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "hip-hop"
+        }
+      }
+    },
+
+    "UserwithoutID": {
+      "type": "object",
+      "required": [
+        "lastname",
+        "firstname",
+        "email",
+        "password"
+      ],
+      "properties": {
+        "lastname": {
+          "type": "string",
+          "example": "Alexandre"
+        },
+        "firstname": {
+          "type": "string",
+          "example": "Normand"
+        },
+        "email": {
+          "type": "string",
+          "example": "test@urevent.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "1234"
+        }
+      }
+    },
+
+    "User": {
+      "type": "object",
+      "required": [
+        "lastname",
+        "firstname",
+        "email",
+        "password"
+      ],
+      "properties": {
+        "lastname": {
+          "type": "string",
+          "example": "Alexandre"
+        },
+        "firstname": {
+          "type": "string",
+          "example": "Normand"
+        },
+        "email": {
+          "type": "string",
+          "example": "test@urevent.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "$2b$10$yD0RmumgpXlbyrBkl/dRIOLRVtPhi3jMGvRpG6x6MxH9P606Mv4MG"
+        }
+      }
+    },
+
+    "loginUser": {
+      "type": "object",
+      "required": [
+        "email",
+        "password"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "test@urevent.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "1234"
+        }
+      }
+    }
+  }
+
+}
+

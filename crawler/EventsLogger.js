@@ -14,9 +14,9 @@ var logger = function(count, start_date, end_date) {
     	+ content, (err) => {
         if(err) {
             console.error(err);
-            return
+
         }
     }
 )
-}
+};
 module.exports = logger;
